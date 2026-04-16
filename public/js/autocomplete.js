@@ -58,13 +58,58 @@ const TRIMS = {
 };
 
 /* ── Admin form autocomplete ───────────────────────────────── */
+// Track focused index per dropdown
+const _acIdx = {};
+
 function acShow(id, items, onSelect) {
   const dd = document.getElementById(id);
   if (!items.length) { dd.classList.remove('open'); return; }
-  dd.innerHTML = items.slice(0, 12).map(item =>
-    `<div class="ac-item" onmousedown="event.preventDefault()" onclick="(${onSelect.toString()})('${escHtml(item)}')">${highlightMatch(item, document.getElementById(id.replace('ac-', 'u-'))?.value || '')}</div>`
+  const inputId = id.replace('ac-', 'u-');
+  const query   = document.getElementById(inputId)?.value || '';
+  _acIdx[id]    = -1;
+
+  dd.innerHTML = items.slice(0, 12).map((item, i) =>
+    `<div class="ac-item" data-i="${i}" onmousedown="event.preventDefault()"
+      onclick="(${onSelect.toString()})('${escHtml(item)}')"
+      onmouseover="_acIdx['${id}']=${i};acHighlight('${id}')"
+    >${highlightMatch(item, query)}</div>`
   ).join('');
   dd.classList.add('open');
+}
+
+function acHighlight(id) {
+  const dd = document.getElementById(id);
+  dd.querySelectorAll('.ac-item').forEach((el, i) =>
+    el.classList.toggle('focused', i === _acIdx[id])
+  );
+}
+
+function acKey(e, id, onEnter) {
+  const dd    = document.getElementById(id);
+  const items = dd.querySelectorAll('.ac-item');
+  if (!dd.classList.contains('open') || !items.length) return;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    _acIdx[id] = Math.min((_acIdx[id] ?? -1) + 1, items.length - 1);
+    acHighlight(id);
+    items[_acIdx[id]].scrollIntoView({ block: 'nearest' });
+
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    _acIdx[id] = Math.max((_acIdx[id] ?? 0) - 1, 0);
+    acHighlight(id);
+    items[_acIdx[id]].scrollIntoView({ block: 'nearest' });
+
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    // Use focused item, or fall back to first item
+    const idx = (_acIdx[id] >= 0) ? _acIdx[id] : 0;
+    if (items[idx]) items[idx].click();
+
+  } else if (e.key === 'Escape') {
+    acHide(id);
+  }
 }
 
 function highlightMatch(str, query) {
@@ -80,12 +125,13 @@ function acHide(id, delay = 0) {
 
 function acMake(input) {
   const v = input.value.trim().toLowerCase();
-  acShow('ac-make', v ? ALL_MAKES.filter(m => m.toLowerCase().includes(v)) : ALL_MAKES, val => {
+  const onSelect = val => {
     document.getElementById('u-make').value = val;
     acHide('ac-make');
     document.getElementById('u-model').focus();
     acModel(document.getElementById('u-model'));
-  });
+  };
+  acShow('ac-make', v ? ALL_MAKES.filter(m => m.toLowerCase().includes(v)) : ALL_MAKES, onSelect);
 }
 
 function acModel(input) {

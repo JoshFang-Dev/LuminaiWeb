@@ -443,29 +443,29 @@
 
               <div class="form-group ac-wrap">
                 <label>Make *</label>
-                <input type="text" id="u-make" required placeholder="e.g. BMW" oninput="acMake(this)" onblur="acHide('ac-make',300)" onfocus="acMake(this)">
+                <input type="text" id="u-make" required placeholder="e.g. BMW" oninput="acMake(this)" onblur="acHide('ac-make',300)" onfocus="acMake(this)" onkeydown="acKey(event,'ac-make')">
                 <div class="ac-dropdown" id="ac-make"></div>
               </div>
               <div class="form-group ac-wrap">
                 <label>Model *</label>
-                <input type="text" id="u-model" required placeholder="e.g. 3 Series" oninput="acModel(this)" onblur="acHide('ac-model',300)" onfocus="acModel(this)">
+                <input type="text" id="u-model" required placeholder="e.g. 3 Series" oninput="acModel(this)" onblur="acHide('ac-model',300)" onfocus="acModel(this)" onkeydown="acKey(event,'ac-model')">
                 <div class="ac-dropdown" id="ac-model"></div>
               </div>
               <div class="form-group ac-wrap">
                 <label>Year *</label>
-                <input type="text" id="u-year" required placeholder="e.g. 2022" oninput="acYear(this)" onblur="acHide('ac-year',300)" onfocus="acYear(this)" maxlength="4">
+                <input type="text" id="u-year" required placeholder="e.g. 2022" oninput="acYear(this)" onblur="acHide('ac-year',300)" onfocus="acYear(this)" maxlength="4" onkeydown="acKey(event,'ac-year')">
                 <div class="ac-dropdown" id="ac-year"></div>
               </div>
               <div class="form-group ac-wrap">
                 <label>Trim / Variant</label>
-                <input type="text" id="u-trim" placeholder="e.g. M Sport xDrive" oninput="acTrim(this)" onblur="acHide('ac-trim',300)" onfocus="acTrim(this)">
+                <input type="text" id="u-trim" placeholder="e.g. M Sport xDrive" oninput="acTrim(this)" onblur="acHide('ac-trim',300)" onfocus="acTrim(this)" onkeydown="acKey(event,'ac-trim')">
                 <div class="ac-dropdown" id="ac-trim"></div>
               </div>
               <div class="form-group"><label>Price (CAD) *</label><input type="number" id="u-price" required placeholder="45000" min="0"></div>
               <div class="form-group"><label>Mileage (km)</label><input type="number" id="u-mileage" placeholder="e.g. 35000" min="0"></div>
               <div class="form-group ac-wrap">
                 <label>Colour</label>
-                <input type="text" id="u-color" placeholder="e.g. Alpine White" oninput="acColor(this)" onblur="acHide('ac-color',300)" onfocus="acColor(this)">
+                <input type="text" id="u-color" placeholder="e.g. Alpine White" oninput="acColor(this)" onblur="acHide('ac-color',300)" onfocus="acColor(this)" onkeydown="acKey(event,'ac-color')">
                 <div class="ac-dropdown" id="ac-color"></div>
               </div>
               <div class="form-group">
