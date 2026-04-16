@@ -104,8 +104,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,
 .car-badge{position:absolute;top:10px;left:10px;background:var(--gold);color:#fff;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;font-weight:600;border-radius:2px}
 .car-badge-sold{position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;font-weight:600;border-radius:2px}
 .car-info{padding:14px 16px 16px}
-.car-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.car-trim-line{font-size:12px;color:var(--text3);margin-bottom:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:16px}
+.car-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:2px}
+.car-trim-line{font-size:12px;color:var(--text3);margin-bottom:12px;min-height:16px}
 .car-quick-specs{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:14px}
 .car-qs-item{display:flex;flex-direction:column;align-items:center;padding:10px 4px;gap:4px;position:relative}
 .car-qs-item+.car-qs-item::before{content:'';position:absolute;left:0;top:20%;height:60%;width:1px;background:var(--border)}
@@ -332,12 +332,10 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:64px 32p
 .badge-check-item input:checked + .badge-check-pill{background:var(--gold);border-color:var(--gold);color:#fff}
 .badge-check-pill:hover{border-color:var(--gold);color:var(--gold)}
 
-/* ── Car card highlight badges (below title) ───────────────── */
-.car-highlights{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;min-height:0}
+/* ── Car meta row (body style + badges, same line) ─────────── */
+.car-meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:8px}
+.car-body-pill{display:inline-block;font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;background:var(--bg3);color:var(--text2);border-radius:2px}
 .car-highlight-tag{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 7px;border:1px solid var(--border2);color:var(--text3);border-radius:2px;line-height:1.4}
-
-/* ── Body style tag on car card ────────────────────────────── */
-.car-body-pill{display:inline-block;font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;background:var(--bg3);color:var(--text3);border-radius:2px;margin-bottom:4px}
 
 @media(max-width:900px){
   .nav-links{display:none}.ham{display:flex}

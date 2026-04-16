@@ -88,6 +88,9 @@ function filterCars() {
   if (sort === 'year-desc')  cars.sort((a, b) => b.year  - a.year);
   if (sort === 'year-asc')   cars.sort((a, b) => a.year  - b.year);
 
+  // Always push sold vehicles to the end
+  cars.sort((a, b) => (a.status === 'sold' ? 1 : 0) - (b.status === 'sold' ? 1 : 0));
+
   const rc = document.getElementById('resultsCount');
   if (rc) rc.innerHTML = `<span>${cars.length}</span> vehicle${cars.length !== 1 ? 's' : ''}`;
 
@@ -163,10 +166,13 @@ function renderCarGrid(cars) {
         ${isSold              ? '<span class="car-badge-sold">Sold</span>'    : ''}
       </div>
       <div class="car-info">
-        ${bodyStyle ? `<span class="car-body-pill">${escHtml(bodyStyle)}</span>` : ''}
         <div class="car-name">${escHtml(title)}</div>
+        ${(bodyStyle || badges.length) ? `
+        <div class="car-meta-row">
+          ${bodyStyle ? `<span class="car-body-pill">${escHtml(bodyStyle)}</span>` : ''}
+          ${badges.map(b => `<span class="car-highlight-tag">${escHtml(b)}</span>`).join('')}
+        </div>` : ''}
         <div class="car-trim-line">${escHtml(car.trim || '')}</div>
-        ${badges.length ? `<div class="car-highlights">${badges.map(b => `<span class="car-highlight-tag">${escHtml(b)}</span>`).join('')}</div>` : ''}
         <div class="car-quick-specs">
           <div class="car-qs-item"><span class="car-qs-icon" style="color:var(--text3)">${SVG_MILEAGE}</span><span class="car-qs-label">Mileage</span><span class="car-qs-value">${mileageVal}</span></div>
           <div class="car-qs-item"><span class="car-qs-icon" style="color:var(--text3)">${SVG_TRANS}</span><span class="car-qs-label">Trans</span><span class="car-qs-value">${escHtml(transVal)}</span></div>
