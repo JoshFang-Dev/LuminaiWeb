@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luminai Auto Group | Premium Auto Dealership Vancouver</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<!-- ── Navigation ──────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo" onclick="showPage('home')">LUMINAI <span>AUTO</span></div>
+    <div class="nav-links">
+      <a href="#" onclick="showPage('home')"      id="nav-home">Inventory</a>
+      <a href="#" onclick="showPage('about')"     id="nav-about">About</a>
+      <a href="#" onclick="showPage('financing')" id="nav-financing">Financing</a>
+      <a href="#" onclick="showPage('contact')"   id="nav-contact">Contact</a>
+    </div>
+    <div class="ham" onclick="toggleMobile()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="showPage('home');toggleMobile()">Inventory</a>
+  <a href="#" onclick="showPage('about');toggleMobile()">About</a>
+  <a href="#" onclick="showPage('financing');toggleMobile()">Financing</a>
+  <a href="#" onclick="showPage('contact');toggleMobile()">Contact</a>
+</div>
+
+<!-- ── Home / Inventory ─────────────────────────────────────── -->
+<div id="page-home" class="page active">
+  <div id="inventory" style="padding-top:86px;padding-bottom:80px;max-width:1340px;margin:0 auto;padding-left:32px;padding-right:32px">
+
+    <button class="filter-mobile-toggle" onclick="toggleMobileFilter()">
+      <span>Filters</span><span id="mobileFilterChevron">▼</span>
+    </button>
+
+    <div class="inventory-layout">
+
+      <!-- Sidebar filter -->
+      <aside class="filter-sidebar" id="filterSidebar">
+        <div class="filter-sidebar-head">
+          <h3>Filter</h3>
+          <button class="filter-clear" onclick="clearAllFilters()">Clear All</button>
+        </div>
+
+        <div class="filter-search-wrap" style="position:relative">
+          <input type="text" id="searchInput" placeholder="Search make, model, year…"
+            oninput="filterSearchAC(this);filterCars()"
+            onkeydown="filterSearchKey(event)"
+            onfocus="filterSearchAC(this)"
+            onblur="fsHide(180)"
+            autocomplete="off">
+          <span class="search-icon">🔍</span>
+          <div class="fs-dropdown" id="fsDropdown"></div>
+        </div>
+
+        <div class="filter-section open" id="fs-make">
+          <div class="filter-section-head" onclick="toggleSection('fs-make')">
+            <span class="filter-section-label">Make</span><span class="filter-chevron">▼</span>
+          </div>
+          <div class="filter-section-body"><div class="filter-pills" id="makePills"></div></div>
+        </div>
+
+        <div class="filter-section open" id="fs-year">
+          <div class="filter-section-head" onclick="toggleSection('fs-year')">
+            <span class="filter-section-label">Year</span><span class="filter-chevron">▼</span>
+          </div>
+          <div class="filter-section-body"><div class="filter-pills" id="yearPills"></div></div>
+        </div>
+
+        <div class="filter-section open" id="fs-price">
+          <div class="filter-section-head" onclick="toggleSection('fs-price')">
+            <span class="filter-section-label">Price</span><span class="filter-chevron">▼</span>
+          </div>
+          <div class="filter-section-body">
+            <div class="price-range-wrap">
+              <div class="price-range-inputs">
+                <input type="number" id="priceMin" placeholder="Min $" min="0" step="1000">
+                <input type="number" id="priceMax" placeholder="Max $" min="0" step="1000">
+              </div>
+              <button class="price-apply" onclick="filterCars()">Apply</button>
+            </div>
+            <div class="filter-pills" style="margin-top:10px" id="pricePills">
+              <button class="filter-pill" data-price=""           onclick="setPricePreset(this,'','')">Any</button>
+              <button class="filter-pill" data-price="0-30000"    onclick="setPricePreset(this,0,30000)">Under $30K</button>
+              <button class="filter-pill" data-price="30000-60000" onclick="setPricePreset(this,30000,60000)">$30K–$60K</button>
+              <button class="filter-pill" data-price="60000-100000" onclick="setPricePreset(this,60000,100000)">$60K–$100K</button>
+              <button class="filter-pill" data-price="100000-999999" onclick="setPricePreset(this,100000,999999)">$100K+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-section open" id="fs-body">
+          <div class="filter-section-head" onclick="toggleSection('fs-body')">
+            <span class="filter-section-label">Body Type</span><span class="filter-chevron">▼</span>
+          </div>
+          <div class="filter-section-body">
+            <div class="filter-pills" id="bodyPills">
+              <button class="filter-pill active" data-body=""          onclick="setBody(this,'')">All</button>
+              <button class="filter-pill"        data-body="Sedan"     onclick="setBody(this,'Sedan')">Sedan</button>
+              <button class="filter-pill"        data-body="SUV"       onclick="setBody(this,'SUV')">SUV</button>
+              <button class="filter-pill"        data-body="Truck"     onclick="setBody(this,'Truck')">Truck</button>
+              <button class="filter-pill"        data-body="Coupe"     onclick="setBody(this,'Coupe')">Coupe</button>
+              <button class="filter-pill"        data-body="Hatchback" onclick="setBody(this,'Hatchback')">Hatchback</button>
+              <button class="filter-pill"        data-body="Van"       onclick="setBody(this,'Van')">Van</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-section open" id="fs-status">
+          <div class="filter-section-head" onclick="toggleSection('fs-status')">
+            <span class="filter-section-label">Status</span><span class="filter-chevron">▼</span>
+          </div>
+          <div class="filter-section-body">
+            <div class="filter-pills" id="statusPills">
+              <button class="filter-pill active" data-status=""          onclick="setStatus(this,'')">All</button>
+              <button class="filter-pill"        data-status="available" onclick="setStatus(this,'available')">Available</button>
+              <button class="filter-pill"        data-status="new"       onclick="setStatus(this,'new')">New Arrival</button>
+              <button class="filter-pill"        data-status="sold"      onclick="setStatus(this,'sold')">Sold</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Results -->
+      <div>
+        <div class="active-filters" id="activeFilters"></div>
+        <div class="results-bar">
+          <div class="results-count" id="resultsCount"><span>0</span> vehicles</div>
+          <select class="sort-select" id="sortSelect" onchange="filterCars()">
+            <option value="default">Sort: Default</option>
+            <option value="price-asc">Price: Low → High</option>
+            <option value="price-desc">Price: High → Low</option>
+            <option value="year-desc">Year: Newest</option>
+            <option value="year-asc">Year: Oldest</option>
+          </select>
+        </div>
+        <div class="car-grid" id="carGrid"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Why Us -->
+  <div style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-top:32px">
+    <div class="section">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0">
+        <div style="padding:32px;border-right:1px solid var(--border)">
+          <div style="font-size:28px;margin-bottom:12px">🛡️</div>
+          <h3 style="font-size:20px;color:var(--text);margin-bottom:8px">Inspected &amp; Certified</h3>
+          <p style="color:var(--text3);font-size:14px;line-height:1.7">Every vehicle undergoes a thorough multi-point inspection before listing.</p>
+        </div>
+        <div style="padding:32px;border-right:1px solid var(--border)">
+          <div style="font-size:28px;margin-bottom:12px">💳</div>
+          <h3 style="font-size:20px;color:var(--text);margin-bottom:8px">Flexible Financing</h3>
+          <p style="color:var(--text3);font-size:14px;line-height:1.7">We work with top lenders to get you the best possible rate.</p>
+        </div>
+        <div style="padding:32px;border-right:1px solid var(--border)">
+          <div style="font-size:28px;margin-bottom:12px">🔧</div>
+          <h3 style="font-size:20px;color:var(--text);margin-bottom:8px">In-House Service</h3>
+          <p style="color:var(--text3);font-size:14px;line-height:1.7">Full mechanical service at our dedicated service centre in Richmond.</p>
+        </div>
+        <div style="padding:32px">
+          <div style="font-size:28px;margin-bottom:12px">🤝</div>
+          <h3 style="font-size:20px;color:var(--text);margin-bottom:8px">No Pressure Sales</h3>
+          <p style="color:var(--text3);font-size:14px;line-height:1.7">Transparent pricing and honest advice — we're here to help, not push.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <span class="logo">LUMINAI <span>AUTO</span></span>
+          <p>Richmond's trusted source for premium pre-owned vehicles. Quality, transparency, and service you can count on.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <a href="#" onclick="showPage('home')">Inventory</a>
+          <a href="#" onclick="showPage('about')">About Us</a>
+          <a href="#" onclick="showPage('financing')">Financing</a>
+          <a href="#" onclick="showPage('contact')">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <p>📍 2153-21320 Westminster Hwy<br>Richmond, BC</p>
+          <p>📞 (778) 829-1285</p>
+          <p>✉️ info@luminaiauto.ca</p>
+        </div>
+        <div class="footer-col">
+          <h4>Hours</h4>
+          <p>Mon – Fri<br>10:30 AM – 6:30 PM</p>
+          <p>Sat – Sun<br>10:30 AM – 6:30 PM</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Luminai Auto Group Inc. All rights reserved.</p>
+        <p style="color:var(--text3);font-size:13px">Richmond, BC · Vancouver</p>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ── About ────────────────────────────────────────────────── -->
+<div id="page-about" class="page">
+  <div style="padding-top:70px">
+    <div class="about-hero">
+      <div class="section-tag" style="justify-content:center;display:flex;margin-bottom:16px">Our Story</div>
+      <h1>Built on Trust,<br>Driven by Passion</h1>
+      <p>Luminai Auto Group has been serving the greater Vancouver area with integrity and excellence for over a decade.</p>
+    </div>
+    <div class="about-content">
+      <div class="about-grid">
+        <div class="about-img-box"><span>🏢</span><p>Our Richmond Showroom</p></div>
+        <div class="about-text">
+          <h2>Who We Are</h2>
+          <p>Founded in Richmond, BC, Luminai Auto Group started with a simple mission: make buying a premium pre-owned vehicle a genuinely enjoyable experience. No pressure tactics, no hidden fees, just honest cars at fair prices.</p>
+          <p>Our showroom on No. 3 Road in Richmond is home to a carefully curated selection of vehicles spanning luxury sedans, SUVs, sports cars, and everyday drivers — all hand-picked and inspected by our expert team.</p>
+          <p>We believe every customer deserves dealership-level quality without dealership-level games. That's the Luminai Auto difference.</p>
+        </div>
+      </div>
+      <div class="values-grid">
+        <div class="value-card"><div class="value-icon">🔍</div><h3>Transparency</h3><p>Every vehicle comes with a full history report. No surprises at the signing table.</p></div>
+        <div class="value-card"><div class="value-icon">⭐</div><h3>Quality First</h3><p>We only list vehicles that meet our strict standards — if we wouldn't drive it, we won't sell it.</p></div>
+        <div class="value-card"><div class="value-icon">🤝</div><h3>Community</h3><p>Proudly serving Richmond and the greater Vancouver community since our founding.</p></div>
+        <div class="value-card"><div class="value-icon">🔧</div><h3>After-Sale Support</h3><p>Our relationship doesn't end at the sale. Our service team is always here for you.</p></div>
+      </div>
+    </div>
+    <footer><div class="footer-inner"><div class="footer-bottom" style="border-top:none"><p>© 2026 Luminai Auto Group Inc. All rights reserved.</p></div></div></footer>
+  </div>
+</div>
+
+<!-- ── Financing ─────────────────────────────────────────────── -->
+<div id="page-financing" class="page">
+  <div style="padding-top:70px">
+    <div class="financing-hero">
+      <div class="section-tag" style="justify-content:center;display:flex;margin-bottom:16px">Auto Financing</div>
+      <h1>Drive Now,<br>Pay Your Way</h1>
+      <p>We work with a network of lenders to secure competitive financing for all credit situations — new to Canada, first-time buyer, or rebuilding credit.</p>
+      <button class="btn-primary" onclick="document.getElementById('financeForm').scrollIntoView({behavior:'smooth'})">Apply Now</button>
+    </div>
+    <div class="financing-content">
+      <div class="section-header">
+        <div class="section-tag">How It Works</div>
+        <h2>Simple. Fast. Transparent.</h2>
+      </div>
+      <div class="financing-steps">
+        <div class="step-card"><div class="step-num">01</div><h3>Apply Online</h3><p>Fill out our simple financing application in under 5 minutes. No credit hit for pre-approval.</p></div>
+        <div class="step-card"><div class="step-num">02</div><h3>We Shop Lenders</h3><p>Our team submits your application to multiple lenders to find you the best rate available.</p></div>
+        <div class="step-card"><div class="step-num">03</div><h3>Get Approved</h3><p>Receive your approval offer — often within 24 hours — and choose your payment terms.</p></div>
+        <div class="step-card"><div class="step-num">04</div><h3>Drive Away</h3><p>Pick your car and drive away the same day. We handle all the paperwork.</p></div>
+      </div>
+      <div class="finance-form-wrap" id="financeForm">
+        <h2>Financing Application</h2>
+        <p>Fill out the form below and our finance team will be in touch within one business day.</p>
+        <form onsubmit="submitFinancing(event)">
+          <div class="form-row">
+            <div class="form-group"><label>First Name</label><input type="text" required placeholder="John"></div>
+            <div class="form-group"><label>Last Name</label><input type="text" required placeholder="Smith"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Email</label><input type="email" required placeholder="john@email.com"></div>
+            <div class="form-group"><label>Phone</label><input type="tel" required placeholder="(604) 000-0000"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Employment Status</label>
+              <select required>
+                <option value="">Select...</option>
+                <option>Full-Time Employed</option>
+                <option>Part-Time Employed</option>
+                <option>Self-Employed</option>
+                <option>Retired</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Annual Income</label>
+              <select required>
+                <option value="">Select...</option>
+                <option>Under $30,000</option>
+                <option>$30,000 – $50,000</option>
+                <option>$50,000 – $80,000</option>
+                <option>$80,000 – $120,000</option>
+                <option>$120,000+</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group"><label>Vehicle of Interest</label><input type="text" placeholder="e.g. 2022 BMW 3 Series or any available"></div>
+          <div class="form-group"><label>Down Payment (CAD)</label><input type="number" placeholder="e.g. 5000" min="0"></div>
+          <div class="form-group"><label>Additional Notes</label><textarea placeholder="Tell us anything else relevant..."></textarea></div>
+          <button type="submit" class="form-submit">Submit Application</button>
+          <div id="financeMsg" class="form-msg"></div>
+        </form>
+      </div>
+    </div>
+    <footer><div class="footer-inner"><div class="footer-bottom" style="border-top:none"><p>© 2026 Luminai Auto Group Inc. All rights reserved.</p></div></div></footer>
+  </div>
+</div>
+
+<!-- ── Contact ───────────────────────────────────────────────── -->
+<div id="page-contact" class="page">
+  <div style="padding-top:70px">
+    <div class="section" style="padding-top:80px">
+      <div class="section-tag">Get In Touch</div>
+      <div class="contact-grid" style="margin-top:40px">
+        <div class="contact-info">
+          <h2>We'd Love to<br>Hear From You</h2>
+          <p>Whether you have a question about a vehicle, need financing advice, or just want to chat about cars — our team is here to help.</p>
+          <div class="contact-item"><div class="contact-icon">📍</div><div><div class="contact-item-label">Showroom</div><div class="contact-item-val">2153-21320 Westminster Hwy<br>Richmond, BC</div></div></div>
+          <div class="contact-item"><div class="contact-icon">🔧</div><div><div class="contact-item-label">Service Centre</div><div class="contact-item-val">12871 Clarke Pl #190<br>Richmond, BC V6V 2H9</div></div></div>
+          <div class="contact-item"><div class="contact-icon">📞</div><div><div class="contact-item-label">Phone</div><div class="contact-item-val">(778) 829-1285</div></div></div>
+          <div class="contact-item"><div class="contact-icon">✉️</div><div><div class="contact-item-label">Email</div><div class="contact-item-val">info@luminaiauto.ca</div></div></div>
+          <div style="margin-top:32px">
+            <div class="contact-item-label" style="margin-bottom:12px">Business Hours</div>
+            <div class="hours-row"><span>Monday – Friday</span><span style="color:var(--gold)">10:30 AM – 6:30 PM</span></div>
+            <div class="hours-row"><span>Saturday</span><span style="color:var(--gold)">10:30 AM – 6:30 PM</span></div>
+            <div class="hours-row" style="border-bottom:none"><span>Sunday</span><span style="color:var(--gold)">10:30 AM – 6:30 PM</span></div>
+          </div>
+        </div>
+        <div>
+          <div style="background:var(--bg2);border:1px solid var(--border);padding:40px">
+            <h3 style="font-size:28px;color:var(--text);margin-bottom:8px">Send a Message</h3>
+            <p style="color:var(--text2);margin-bottom:32px;font-size:15px">We typically respond within a few hours during business hours.</p>
+            <form onsubmit="submitContact(event)">
+              <div class="form-row">
+                <div class="form-group"><label>First Name</label><input type="text" id="cFirstName" required placeholder="John"></div>
+                <div class="form-group"><label>Last Name</label><input type="text" id="cLastName" required placeholder="Smith"></div>
+              </div>
+              <div class="form-group"><label>Email</label><input type="email" id="cEmail" required placeholder="john@email.com"></div>
+              <div class="form-group"><label>Phone</label><input type="tel" id="cPhone" placeholder="(604) 000-0000"></div>
+              <div class="form-group">
+                <label>Vehicle of Interest</label>
+                <select id="cCar"><option value="">General Inquiry</option></select>
+              </div>
+              <div class="form-group"><label>Message</label><textarea id="cMessage" required placeholder="Tell us how we can help..." style="min-height:140px"></textarea></div>
+              <button type="submit" class="form-submit">Send Message</button>
+              <div id="contactMsg" class="form-msg"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer><div class="footer-inner"><div class="footer-bottom" style="border-top:none"><p>© 2026 Luminai Auto Group Inc. All rights reserved.</p></div></div></footer>
+  </div>
+</div>
+
+<!-- ── Login ─────────────────────────────────────────────────── -->
+<div id="page-login" class="page">
+  <div class="login-wrap">
+    <div class="login-box">
+      <div class="login-logo">LUMINAI <span>AUTO</span></div>
+      <div class="login-sub">Owner / Admin Portal</div>
+      <div id="loginError" class="login-error">Invalid username or password.</div>
+      <form onsubmit="doLogin(event)">
+        <div class="form-group"><label>Username</label><input type="text" id="loginUser" required placeholder="Enter your username" autocomplete="username"></div>
+        <div class="form-group"><label>Password</label><input type="password" id="loginPass" required placeholder="Enter your password" autocomplete="current-password"></div>
+        <button type="submit" class="form-submit" style="margin-top:8px">Sign In</button>
+      </form>
+      <p style="text-align:center;color:var(--text3);font-size:13px;margin-top:20px;cursor:pointer" onclick="showPage('home')">← Back to Website</p>
+      <p style="text-align:center;color:var(--text3);font-size:11px;margin-top:20px;opacity:0.5">Demo credentials: admin / luminaiauto2024</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Admin Dashboard ───────────────────────────────────────── -->
+<div id="page-admin" class="page">
+  <div class="admin-layout">
+    <div class="sidebar">
+      <div class="sidebar-logo">LUMINAI <span>Admin Dashboard</span></div>
+      <div class="sidebar-nav">
+        <div class="sidebar-section">Management</div>
+        <div class="sidebar-item active" onclick="adminTab('overview')" id="st-overview">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Overview
+        </div>
+        <div class="sidebar-item" onclick="adminTab('inventory')" id="st-inventory">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/><circle cx="12" cy="20" r="1"/><circle cx="20" cy="20" r="1"/></svg>
+          Inventory
+        </div>
+        <div class="sidebar-item" onclick="adminTab('upload')" id="st-upload">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload Car
+        </div>
+        <div class="sidebar-item" onclick="adminTab('messages')" id="st-messages">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Messages <span id="unreadBadge" style="margin-left:auto;display:none" class="msg-unread-badge">0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div><h1>Dashboard</h1><p id="adminDate">Welcome back</p></div>
+        <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+      </div>
+
+      <div id="ap-overview">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-card-label">Total Listings</div><div class="stat-card-value" id="sc-listings">0</div><div class="stat-card-sub">Active vehicles</div></div>
+          <div class="stat-card"><div class="stat-card-label">New Messages</div><div class="stat-card-value" id="sc-msgs">0</div><div class="stat-card-sub">Unread inquiries</div></div>
+          <div class="stat-card"><div class="stat-card-label">Total Messages</div><div class="stat-card-value" id="sc-total-msgs">0</div><div class="stat-card-sub">All time</div></div>
+          <div class="stat-card"><div class="stat-card-label">Sold Vehicles</div><div class="stat-card-value" id="sc-sold">0</div><div class="stat-card-sub">Marked as sold</div></div>
+        </div>
+        <div class="admin-panel"><h2>Recent Messages</h2><div id="overviewMsgs"></div></div>
+        <div class="admin-panel">
+          <h2>Quick Actions</h2>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <button class="btn-primary"  onclick="adminTab('upload')">+ Upload New Car</button>
+            <button class="btn-outline"  onclick="adminTab('messages')">View All Messages</button>
+            <button class="btn-outline"  onclick="showPage('home')">← View Website</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="ap-inventory" style="display:none">
+        <div class="admin-panel">
+          <h2>Manage Inventory (<span id="invCount">0</span> listings)</h2>
+          <div id="inventoryTable"><div class="empty-state"><h3>No Vehicles Listed</h3><p>Upload your first vehicle using the Upload Car section.</p></div></div>
+        </div>
+      </div>
+
+      <div id="ap-upload" style="display:none">
+        <div class="admin-panel">
+          <h2>Upload New Vehicle</h2>
+          <form onsubmit="uploadCar(event)" autocomplete="off">
+            <div class="upload-grid">
+
+              <!-- Custom Title — full width -->
+              <div class="form-group span2">
+                <label>Custom Title <span style="font-weight:400;color:var(--text3)">(overrides auto-generated Year Make Model)</span></label>
+                <input type="text" id="u-title" placeholder="e.g. 2022 BMW M4 Competition | Low KM | BC Local">
+              </div>
+
+              <div class="form-group ac-wrap">
+                <label>Make *</label>
+                <input type="text" id="u-make" required placeholder="e.g. BMW" oninput="acMake(this)" onblur="acHide('ac-make',300)" onfocus="acMake(this)">
+                <div class="ac-dropdown" id="ac-make"></div>
+              </div>
+              <div class="form-group ac-wrap">
+                <label>Model *</label>
+                <input type="text" id="u-model" required placeholder="e.g. 3 Series" oninput="acModel(this)" onblur="acHide('ac-model',300)" onfocus="acModel(this)">
+                <div class="ac-dropdown" id="ac-model"></div>
+              </div>
+              <div class="form-group ac-wrap">
+                <label>Year *</label>
+                <input type="text" id="u-year" required placeholder="e.g. 2022" oninput="acYear(this)" onblur="acHide('ac-year',300)" onfocus="acYear(this)" maxlength="4">
+                <div class="ac-dropdown" id="ac-year"></div>
+              </div>
+              <div class="form-group ac-wrap">
+                <label>Trim / Variant</label>
+                <input type="text" id="u-trim" placeholder="e.g. M Sport xDrive" oninput="acTrim(this)" onblur="acHide('ac-trim',300)" onfocus="acTrim(this)">
+                <div class="ac-dropdown" id="ac-trim"></div>
+              </div>
+              <div class="form-group"><label>Price (CAD) *</label><input type="number" id="u-price" required placeholder="45000" min="0"></div>
+              <div class="form-group"><label>Mileage (km)</label><input type="number" id="u-mileage" placeholder="e.g. 35000" min="0"></div>
+              <div class="form-group ac-wrap">
+                <label>Colour</label>
+                <input type="text" id="u-color" placeholder="e.g. Alpine White" oninput="acColor(this)" onblur="acHide('ac-color',300)" onfocus="acColor(this)">
+                <div class="ac-dropdown" id="ac-color"></div>
+              </div>
+              <div class="form-group">
+                <label>Transmission</label>
+                <select id="u-trans"><option>Automatic</option><option>Manual</option><option>CVT</option><option>DCT</option></select>
+              </div>
+              <div class="form-group">
+                <label>Fuel Type</label>
+                <select id="u-fuel"><option>Gasoline</option><option>Diesel</option><option>Hybrid</option><option>Electric</option><option>Plug-in Hybrid</option></select>
+              </div>
+              <div class="form-group">
+                <label>Drive Train</label>
+                <select id="u-drive"><option>AWD</option><option>FWD</option><option>RWD</option><option>4WD</option></select>
+              </div>
+              <div class="form-group">
+                <label>Status</label>
+                <select id="u-status"><option value="available">Available</option><option value="new">New Arrival</option><option value="sold">Sold</option></select>
+              </div>
+
+              <!-- Body Style -->
+              <div class="form-group">
+                <label>Body Style</label>
+                <select id="u-body">
+                  <option value="">— Select —</option>
+                  <option value="Sedan">Sedan</option>
+                  <option value="SUV">SUV</option>
+                  <option value="Coupe">Coupe</option>
+                  <option value="Hatchback">Hatchback</option>
+                  <option value="Truck">Truck</option>
+                  <option value="Van">Van</option>
+                  <option value="Wagon">Wagon</option>
+                  <option value="Convertible">Convertible</option>
+                </select>
+              </div>
+
+              <!-- Highlight Badges -->
+              <div class="form-group">
+                <label>Highlight Badges</label>
+                <div class="badge-checks">
+                  <label class="badge-check-item">
+                    <input type="checkbox" id="b-lowkm" value="LOW KM">
+                    <span class="badge-check-pill">LOW KM</span>
+                  </label>
+                  <label class="badge-check-item">
+                    <input type="checkbox" id="b-bclocal" value="BC LOCAL">
+                    <span class="badge-check-pill">BC LOCAL</span>
+                  </label>
+                  <label class="badge-check-item">
+                    <input type="checkbox" id="b-oneowner" value="ONE OWNER">
+                    <span class="badge-check-pill">ONE OWNER</span>
+                  </label>
+                  <label class="badge-check-item">
+                    <input type="checkbox" id="b-noacc" value="NO ACCIDENT">
+                    <span class="badge-check-pill">NO ACCIDENT</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group span2">
+                <label>Photos <span style="font-weight:400;color:var(--text3)">(drag &amp; drop to add · drag thumbnails to reorder)</span></label>
+                <div class="dropzone" id="dropzone"
+                  ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event)"
+                  onclick="document.getElementById('imgFileInput').click()">
+                  <div class="dz-icon">📷</div>
+                  <div class="dz-text">Drag images here or <span class="dz-link">browse files</span></div>
+                  <div class="dz-sub">JPG, PNG, WEBP — multiple files supported</div>
+                </div>
+                <input type="file" id="imgFileInput" accept="image/*" multiple style="display:none" onchange="dzFiles(this.files)">
+                <div class="img-thumb-grid" id="imgThumbGrid"></div>
+              </div>
+              <div class="form-group span2">
+                <label>Description</label>
+                <textarea id="u-desc" placeholder="Brief description of the vehicle, history, condition, features..." style="min-height:100px"></textarea>
+              </div>
+            </div>
+            <button type="submit" class="form-submit" style="max-width:280px;margin-top:8px">Publish Listing</button>
+            <div id="uploadMsg" class="form-msg"></div>
+          </form>
+        </div>
+      </div>
+
+      <div id="ap-messages" style="display:none">
+        <div class="admin-panel"><h2>Customer Messages</h2><div id="msgList"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Edit Car Modal ────────────────────────────────────────── -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal" style="max-width:860px">
+    <button class="modal-close" onclick="closeEditModal()">✕</button>
+    <div style="padding:32px">
+      <h2 style="font-size:22px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)">Edit Listing</h2>
+      <form onsubmit="saveEdit(event)" autocomplete="off">
+        <input type="hidden" id="e-id">
+        <div class="upload-grid">
+
+          <div class="form-group span2">
+            <label>Custom Title</label>
+            <input type="text" id="e-title" placeholder="e.g. 2022 BMW M4 Competition | Low KM | BC Local">
+          </div>
+
+          <div class="form-group ac-wrap">
+            <label>Make *</label>
+            <input type="text" id="e-make" required oninput="acEdit('make',this)" onblur="acHide('ace-make',300)" onfocus="acEdit('make',this)">
+            <div class="ac-dropdown" id="ace-make"></div>
+          </div>
+          <div class="form-group ac-wrap">
+            <label>Model *</label>
+            <input type="text" id="e-model" required oninput="acEdit('model',this)" onblur="acHide('ace-model',300)" onfocus="acEdit('model',this)">
+            <div class="ac-dropdown" id="ace-model"></div>
+          </div>
+          <div class="form-group ac-wrap">
+            <label>Year *</label>
+            <input type="text" id="e-year" required maxlength="4" oninput="acEdit('year',this)" onblur="acHide('ace-year',300)" onfocus="acEdit('year',this)">
+            <div class="ac-dropdown" id="ace-year"></div>
+          </div>
+          <div class="form-group ac-wrap">
+            <label>Trim / Variant</label>
+            <input type="text" id="e-trim" oninput="acEdit('trim',this)" onblur="acHide('ace-trim',300)" onfocus="acEdit('trim',this)">
+            <div class="ac-dropdown" id="ace-trim"></div>
+          </div>
+
+          <div class="form-group"><label>Price (CAD) *</label><input type="number" id="e-price" required min="0"></div>
+          <div class="form-group"><label>Mileage (km)</label><input type="number" id="e-mileage" min="0"></div>
+
+          <div class="form-group ac-wrap">
+            <label>Colour</label>
+            <input type="text" id="e-color" oninput="acEdit('color',this)" onblur="acHide('ace-color',300)" onfocus="acEdit('color',this)">
+            <div class="ac-dropdown" id="ace-color"></div>
+          </div>
+          <div class="form-group">
+            <label>Transmission</label>
+            <select id="e-trans"><option>Automatic</option><option>Manual</option><option>CVT</option><option>DCT</option></select>
+          </div>
+          <div class="form-group">
+            <label>Fuel Type</label>
+            <select id="e-fuel"><option>Gasoline</option><option>Diesel</option><option>Hybrid</option><option>Electric</option><option>Plug-in Hybrid</option></select>
+          </div>
+          <div class="form-group">
+            <label>Drive Train</label>
+            <select id="e-drive"><option>AWD</option><option>FWD</option><option>RWD</option><option>4WD</option></select>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="e-status"><option value="available">Available</option><option value="new">New Arrival</option><option value="sold">Sold</option></select>
+          </div>
+          <div class="form-group">
+            <label>Body Style</label>
+            <select id="e-body">
+              <option value="">— Select —</option>
+              <option value="Sedan">Sedan</option>
+              <option value="SUV">SUV</option>
+              <option value="Coupe">Coupe</option>
+              <option value="Hatchback">Hatchback</option>
+              <option value="Truck">Truck</option>
+              <option value="Van">Van</option>
+              <option value="Wagon">Wagon</option>
+              <option value="Convertible">Convertible</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Highlight Badges</label>
+            <div class="badge-checks">
+              <label class="badge-check-item"><input type="checkbox" id="eb-lowkm"    value="LOW KM"><span class="badge-check-pill">LOW KM</span></label>
+              <label class="badge-check-item"><input type="checkbox" id="eb-bclocal"  value="BC LOCAL"><span class="badge-check-pill">BC LOCAL</span></label>
+              <label class="badge-check-item"><input type="checkbox" id="eb-oneowner" value="ONE OWNER"><span class="badge-check-pill">ONE OWNER</span></label>
+              <label class="badge-check-item"><input type="checkbox" id="eb-noacc"    value="NO ACCIDENT"><span class="badge-check-pill">NO ACCIDENT</span></label>
+            </div>
+          </div>
+
+          <div class="form-group span2"><label>Description</label><textarea id="e-desc" style="min-height:100px"></textarea></div>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap">
+          <button type="submit" class="form-submit" style="max-width:200px">Save Changes</button>
+          <button type="button" class="btn-outline" onclick="closeEditModal()" style="padding:15px 28px">Cancel</button>
+        </div>
+        <div id="editMsg" class="form-msg"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal ─────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="carModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- ── Toast ─────────────────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<!-- ── Scripts — load order matters ────────────────────────── -->
+<script src="/js/utils.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/nav.js"></script>
+<script src="/js/inventory.js"></script>
+<script src="/js/autocomplete.js"></script>
+<script src="/js/upload.js"></script>
+<script src="/js/forms.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/admin.js"></script>
+<script src="/js/app.js"></script>
+
+</body>
+</html>
