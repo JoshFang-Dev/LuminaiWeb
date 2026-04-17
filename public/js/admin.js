@@ -205,31 +205,36 @@ function openEditModal(id) {
 
   // Populate all fields
   document.getElementById('e-id').value      = car.id;
-  document.getElementById('e-title').value   = car.title  || '';
-  document.getElementById('e-make').value    = car.make   || '';
-  document.getElementById('e-model').value   = car.model  || '';
-  document.getElementById('e-year').value    = car.year   || '';
-  document.getElementById('e-trim').value    = car.trim   || '';
-  document.getElementById('e-price').value   = car.price  || '';
+  document.getElementById('e-title').value   = car.title   || '';
+  document.getElementById('e-make').value    = car.make    || '';
+  document.getElementById('e-model').value   = car.model   || '';
+  document.getElementById('e-year').value    = car.year    || '';
+  document.getElementById('e-trim').value    = car.trim    || '';
+  document.getElementById('e-price').value   = car.price   || '';
   document.getElementById('e-mileage').value = car.mileage || '';
-  document.getElementById('e-color').value   = car.color  || '';
-  document.getElementById('e-desc').value    = car.desc   || '';
+  document.getElementById('e-color').value   = car.color   || '';
+  document.getElementById('e-desc').value    = car.desc    || '';
 
-  // Selects — match by value
+  // Selects
   setSelect('e-trans',  car.trans  || 'Automatic');
   setSelect('e-fuel',   car.fuel   || 'Gasoline');
   setSelect('e-drive',  car.drive  || 'AWD');
   setSelect('e-status', car.status || 'available');
   setSelect('e-body',   car.body   || '');
 
-  // Badges — tick matching checkboxes
+  // Badges
   const badges = car.badges || [];
   document.getElementById('eb-lowkm').checked    = badges.includes('LOW KM');
   document.getElementById('eb-bclocal').checked  = badges.includes('BC LOCAL');
   document.getElementById('eb-oneowner').checked = badges.includes('ONE OWNER');
   document.getElementById('eb-noacc').checked    = badges.includes('NO ACCIDENT');
 
-  // Clear any previous message
+  // Load existing images into edit state
+  const existing = car.images?.length ? car.images : (car.img ? [car.img] : []);
+  _editImages = existing.map(url => ({ url, isNew: false, dataUrl: null, name: '' }));
+  renderEditThumbs();
+
+  // Clear message
   const msg = document.getElementById('editMsg');
   msg.className = 'form-msg'; msg.textContent = '';
 
@@ -252,35 +257,120 @@ function setSelect(id, value) {
   sel.selectedIndex = 0;
 }
 
+/* ── Edit image state ──────────────────────────────────────── */
+// Each entry: { url: string, isNew: bool, dataUrl: string|null, name: string }
+let _editImages = [];
+let _edzSrc = null;
+
+function renderEditThumbs() {
+  const grid = document.getElementById('editThumbGrid');
+  if (!_editImages.length) { grid.innerHTML = ''; return; }
+  grid.innerHTML = _editImages.map((img, i) => {
+    const src = img.isNew ? img.dataUrl : img.url;
+    return `
+    <div class="img-thumb" draggable="true" id="ethumb-${i}"
+      ondragstart="edzDragStart(event,${i})" ondragover="edzDragOver(event,${i})"
+      ondragleave="edzDragLeave(event,${i})" ondrop="edzDragDrop(event,${i})" ondragend="edzDragEnd()">
+      <img src="${escHtml(src)}" onerror="this.src=''">
+      ${i === 0 ? '<div class="img-thumb-primary">Cover</div>' : `<div class="img-thumb-order">${i+1}</div>`}
+      <div class="img-thumb-drag-hint">⠿</div>
+      <button type="button" class="img-thumb-remove" onclick="event.stopPropagation();removeEditThumb(${i})" title="Remove">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function removeEditThumb(idx) {
+  _editImages.splice(idx, 1);
+  renderEditThumbs();
+}
+
+// Dropzone for adding new images in edit modal
+function edzOver(e)  { e.preventDefault(); document.getElementById('editDropzone').classList.add('over'); }
+function edzLeave()  { document.getElementById('editDropzone').classList.remove('over'); }
+function edzDrop(e)  { e.preventDefault(); document.getElementById('editDropzone').classList.remove('over'); edzFiles(e.dataTransfer.files); }
+function edzFiles(files) {
+  [...files].forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      _editImages.push({ url: '', isNew: true, dataUrl: ev.target.result, name: file.name });
+      renderEditThumbs();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// Drag-to-reorder in edit modal
+function edzDragStart(e, idx) {
+  _edzSrc = idx;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => document.getElementById('ethumb-' + idx)?.classList.add('dnd-dragging'), 0);
+}
+function edzDragOver(e, idx) {
+  e.preventDefault();
+  if (idx === _edzSrc) return;
+  document.querySelectorAll('#editThumbGrid .img-thumb').forEach(el => el.classList.remove('dnd-over'));
+  document.getElementById('ethumb-' + idx)?.classList.add('dnd-over');
+}
+function edzDragLeave(e, idx) { document.getElementById('ethumb-' + idx)?.classList.remove('dnd-over'); }
+function edzDragDrop(e, idx) {
+  e.preventDefault();
+  if (_edzSrc === null || _edzSrc === idx) return;
+  _editImages.splice(idx, 0, _editImages.splice(_edzSrc, 1)[0]);
+  _edzSrc = null;
+  renderEditThumbs();
+}
+function edzDragEnd() {
+  _edzSrc = null;
+  document.querySelectorAll('#editThumbGrid .img-thumb').forEach(el => el.classList.remove('dnd-dragging', 'dnd-over'));
+}
+
 async function saveEdit(e) {
   e.preventDefault();
   const btn = e.target.querySelector('[type=submit]');
   btn.disabled = true; btn.textContent = 'Saving…';
 
   const id = document.getElementById('e-id').value;
-  const updates = {
-    title:   document.getElementById('e-title').value.trim(),
-    make:    document.getElementById('e-make').value.trim(),
-    model:   document.getElementById('e-model').value.trim(),
-    trim:    document.getElementById('e-trim').value.trim(),
-    year:    parseInt(document.getElementById('e-year').value),
-    price:   parseInt(document.getElementById('e-price').value),
-    mileage: document.getElementById('e-mileage').value ? parseInt(document.getElementById('e-mileage').value) : null,
-    color:   document.getElementById('e-color').value.trim(),
-    trans:   document.getElementById('e-trans').value,
-    fuel:    document.getElementById('e-fuel').value,
-    drive:   document.getElementById('e-drive').value,
-    status:  document.getElementById('e-status').value,
-    body:    document.getElementById('e-body').value,
-    badges:  ['eb-lowkm','eb-bclocal','eb-oneowner','eb-noacc']
-               .filter(bid => document.getElementById(bid).checked)
-               .map(bid => document.getElementById(bid).value),
-    desc:    document.getElementById('e-desc').value.trim(),
-  };
 
   try {
+    // Upload any new images first
+    const finalUrls = [];
+    for (const img of _editImages) {
+      if (img.isNew) {
+        try {
+          const res = await apiFetch('POST', '/images', { data: img.dataUrl, name: img.name });
+          finalUrls.push(res.url);
+        } catch {
+          finalUrls.push(img.dataUrl); // fallback
+        }
+      } else {
+        finalUrls.push(img.url);
+      }
+    }
+
+    const updates = {
+      title:   document.getElementById('e-title').value.trim(),
+      make:    document.getElementById('e-make').value.trim(),
+      model:   document.getElementById('e-model').value.trim(),
+      trim:    document.getElementById('e-trim').value.trim(),
+      year:    parseInt(document.getElementById('e-year').value),
+      price:   parseInt(document.getElementById('e-price').value),
+      mileage: document.getElementById('e-mileage').value ? parseInt(document.getElementById('e-mileage').value) : null,
+      color:   document.getElementById('e-color').value.trim(),
+      trans:   document.getElementById('e-trans').value,
+      fuel:    document.getElementById('e-fuel').value,
+      drive:   document.getElementById('e-drive').value,
+      status:  document.getElementById('e-status').value,
+      body:    document.getElementById('e-body').value,
+      badges:  ['eb-lowkm','eb-bclocal','eb-oneowner','eb-noacc']
+                 .filter(bid => document.getElementById(bid).checked)
+                 .map(bid => document.getElementById(bid).value),
+      desc:    document.getElementById('e-desc').value.trim(),
+      images:  finalUrls,
+      img:     finalUrls[0] || '',
+    };
+
     const saved = await apiFetch('PUT', `/cars/${id}`, updates);
-    // Update cache
     const idx = _cars.findIndex(c => c.id === id);
     if (idx >= 0) _cars[idx] = { ..._cars[idx], ...saved };
 

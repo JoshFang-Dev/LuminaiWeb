@@ -639,6 +639,21 @@
           </div>
 
           <div class="form-group span2"><label>Description</label><textarea id="e-desc" style="min-height:100px"></textarea></div>
+
+          <!-- Image editing -->
+          <div class="form-group span2">
+            <label>Photos <span style="font-weight:400;color:var(--text3)">(drag to reorder · click ✕ to remove · add new below)</span></label>
+            <div class="img-thumb-grid" id="editThumbGrid"></div>
+            <div style="margin-top:12px">
+              <div class="dropzone" id="editDropzone" style="padding:24px 20px"
+                ondragover="edzOver(event)" ondragleave="edzLeave(event)" ondrop="edzDrop(event)"
+                onclick="document.getElementById('editImgInput').click()">
+                <div class="dz-icon" style="font-size:24px;margin-bottom:6px">📷</div>
+                <div class="dz-text" style="font-size:13px">Add more photos — drag here or <span class="dz-link">browse</span></div>
+              </div>
+              <input type="file" id="editImgInput" accept="image/*" multiple style="display:none" onchange="edzFiles(this.files)">
+            </div>
+          </div>
         </div>
 
         <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap">
