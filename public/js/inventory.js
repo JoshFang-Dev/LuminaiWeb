@@ -82,7 +82,7 @@ function filterCars() {
   if (mx !== null && mx < 999999) cars = cars.filter(c => c.price <= mx);
   if (search)      cars = cars.filter(c => (c.make + ' ' + c.model + ' ' + c.year + ' ' + (c.trim || '')).toLowerCase().includes(search));
 
-  const sort = document.getElementById('sortSelect')?.value || 'default';
+  const sort = document.getElementById('sortSelect')?.value || 'price-asc';
   if (sort === 'price-asc')  cars.sort((a, b) => a.price - b.price);
   if (sort === 'price-desc') cars.sort((a, b) => b.price - a.price);
   if (sort === 'year-desc')  cars.sort((a, b) => b.year  - a.year);
