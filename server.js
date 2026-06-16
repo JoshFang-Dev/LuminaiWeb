@@ -10,8 +10,8 @@ const PROD = process.env.NODE_ENV === 'production';
 // ── Middleware ─────────────────────────────────────────────────
 app.use(require('cors')());
 
-// Limit JSON body to 20 MB (base64 images); reject oversized requests early
-app.use(express.json({ limit: '20mb' }));
+// Limit JSON body to 50 MB (multiple base64 images)
+app.use(express.json({ limit: '50mb' }));
 
 // Serve static files with aggressive caching for assets
 app.use(express.static(PUBLIC_DIR, {
@@ -26,10 +26,10 @@ app.use('/uploads', express.static(UPLOADS_DIR, {
   immutable: PROD,
 }));
 
-// ── Redirect bare domain → www (handles root domain without GoDaddy forwarding)
+// ── Redirect bare domain → www with HTTPS ─────────────────────
 app.use((req, res, next) => {
   const host = req.headers.host || '';
-  if (PROD && !host.startsWith('www.') && !host.includes('localhost') && !host.includes('railway')) {
+  if (!host.startsWith('www.') && !host.includes('localhost') && !host.includes('railway.app')) {
     return res.redirect(301, `https://www.${host}${req.url}`);
   }
   next();

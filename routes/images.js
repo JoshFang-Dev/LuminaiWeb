@@ -7,7 +7,7 @@ const router  = express.Router();
 const { UPLOADS_DIR } = require('../lib/storage');
 
 const MIME_EXT = { png: 'png', webp: 'webp', gif: 'gif', jpeg: 'jpg', jpg: 'jpg' };
-const MAX_B64_BYTES = 8 * 1024 * 1024; // 8 MB per image
+const MAX_B64_BYTES = 20 * 1024 * 1024; // 20 MB per image
 
 // POST /api/images
 router.post('/', (req, res) => {
